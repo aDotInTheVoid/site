@@ -2,22 +2,21 @@ baseURL = "https://adotinthevoid.github.io/"
 title = "Nixon Enraght-Moony"
 theme = "my-hyde"
 
-
 [params]
-description = "dsaf"
-themeColor = "theme-base-0f"
+description = "Rust and other joys"
+themeColor = "theme-base-0b"
 # layoutReverse = true
+copyright = { text = "Some Rights Reserved", link = "link" }
 
-copyright="Text"
 [Menus]
 main = [
-    {Name = "Blog", URL="/posts"},
-    {Name = "Github", URL = "https://github.com/adotinthevoid/"},
-    {Name = "LinkedIn", URL = "https://www.linkedin.com/in/nixon-enraght-moony-b68587187/"}
+    { Name = "Blog", URL = "/posts" },
+    { Name = "Github", URL = "https://github.com/adotinthevoid/" },
+    { Name = "LinkedIn", URL = "https://www.linkedin.com/in/nixon-enraght-moony-b68587187/" }
 ]
+
 [permalinks]
 posts = "/posts/:year/:month/:title/"
-
 
 [markup.highlight]
 codeFences = true
