@@ -1,0 +1,9 @@
+[submodule "themes/hyde"]
+	path = themes/hyde
+	url = https://github.com/spf13/hyde
+[submodule "themes/my-hyde"]
+	path = themes/my-hyde
+	url = https://github.com/aDotInTheVoid/hyde
+[submodule "public"]
+	path = public
+	url = https://github.com/aDotInTheVoid/aDotInTheVoid.github.io
