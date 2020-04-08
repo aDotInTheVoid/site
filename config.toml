@@ -6,7 +6,7 @@ theme = "my-hyde"
 description = "Rust and other joys"
 themeColor = "theme-base-0b"
 # layoutReverse = true
-copyright = { text = "Some Rights Reserved", link = "link" }
+copyright = { text = "Some Rights Reserved", link = "meta/#copyright" }
 
 [Menus]
 main = [
