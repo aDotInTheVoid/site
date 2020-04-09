@@ -28,4 +28,4 @@ tabWidth = 4
 [markup.tableOfContents]
 endLevel = 6
 ordered = false
-startLevel = 1
+startLevel = 2
