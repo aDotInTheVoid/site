@@ -26,6 +26,14 @@ Modifications made:
   Allow customization of copyright text
 - [Add table of contents
   option](https://github.com/aDotInTheVoid/hyde/commit/bcab0e3ad77a2790e2e81d7b38441eedfb706fe8)
-  
+- [Add `not_a_list`
+  type](https://github.com/aDotInTheVoid/hyde/commit/d88b6c98164bea424214ef0f5bf79e2236695a79):
+  This is a list type where the list is actualy a single. If you want `.../foo/`
+  and `.../foo/bar` to both look like a single, `.../foo/_index.md` should have
+  `type: not_a_list`
+- [Add image lazy
+  loading](https://github.com/aDotInTheVoid/hyde/commit/cf63c6571696094c26926548ac9b5c8e552edcfa):
+  Based on [this
+  gist](https://gist.github.com/bgadrian/68ec61ed90d7ebe879bd7f0ce4a2a701)
 
 
