@@ -2,16 +2,13 @@
 title: "Metaregex: Idiomatic python to Idiomatic Rust"
 date: 2020-04-08T10:42:42+01:00
 draft: true
+toc: true
 ---
+[![xkcd 1313](https://imgs.xkcd.com/comics/regex_golf.png)](https://xkcd.com/1313/) [^xkcd_license]
 
-As many have noted, xkcd is great. One comic in particular caught my eye, this
-one.
-
-![](https://imgs.xkcd.com/comics/regex_golf.png ) [^xkcd_license]
-
-Being bored in quarantine (which it was when I started this), I decided to try
-to implement this. But first, I needed to check if someone else has. It turns
-out [someone
+## Problem Statement
+Being bored in quarantine, I decided to try to implement this. But first, I
+needed to check if someone else has. It turns out [someone
 has](https://nbviewer.jupyter.org/url/norvig.com/ipython/xkcd1313.ipynb), and
 that person it [Peter Norvig](https://en.wikipedia.org/wiki/Peter_Norvig).
 
@@ -19,6 +16,12 @@ You should go read his solution first because:
 1. It's the basis for what I'm attempting to do
 2. It's a delightful piece of algorithm design and pythonic code
 
+The challenge is to port norvig's python solution to rust. Specificity:
+1. No algorithm changes. This needs to be an apples to apples comparison.
+2. No custom regex code. Norvig uses pythons regex implementation, so I will use
+   the `regex` crate.
+
+## Naive Port
 
 Now lets get into my code. The story I want to tell is not of the initial code,
 but of the imporvements made to it.
@@ -237,6 +240,8 @@ sys     0m0.047s
 ```
 Oops.
 
+## Cheep optimizations
+
 Since we're not using unicode we can [disable that](https://github.com/rust-lang/regex/pull/613)
 ```toml
 [dependencies.regex]
@@ -305,6 +310,8 @@ sys     0m0.021s
 ```
 Nope, it's just unstable.
 
+## Profiling
+
 Given none of the cheep tricks have worked, we need to actually know what we're
 spending time on. Running [`cargo flamegraph`](https://github.com/flamegraph-rs/flamegraph) we get:
 [![](/img/rust_regex_fg1.svg)](/img/rust_regex_fg1.svg)
@@ -326,11 +333,13 @@ may be the only application (let me know if it isn't) that depends on compiling
 regex's fast, it's understandable that the regex crate doesn't care about it
 much. In fact, in the performance guide, the first thing it tells you is [avoid
 compiling
-regexes](https://github.com/rust-lang/regex/blob/3221cdb1e33064ed6648d0a5559711cea9c18067/PERFORMANCE.md#theory-vs-practice).
+regexes]().
 
 Therefor what needs to happen is when a `String` for a regex part is generated
 in `regex_parts`, it is stored with the `regex::Regex` it represents instead of
 creating that `regex::Regex` every time.
+
+## Caching Regexes
 
 ```rust
 #[derive(Clone)]
@@ -410,6 +419,8 @@ Their's three main parts:
   much better as it previously only took up 11% so much more of the time is
   actual regex work.
 
+## Further Regex options
+
 At this point I went and looked back at the [regex perf options](https://docs.rs/regex/1.3.6/regex/#performance-features) and found this
 
 > * **perf** -
@@ -449,6 +460,7 @@ user    0m0.312s
 sys     0m0.023s
 ```
 
+## Alternative Allocations
 Next we can replace the allocator. Rust makes it very easy to use an alternative to the system allocator, such as Jemalloc:
 ```rust
 #[global_allocator]
@@ -470,5 +482,7 @@ I also tried mimalloc, but is was slower.
 
 After using jemalloc, the flamegraph looks like this, and their is very little time spend allocating. Almost all the time is spend in `regex` itself, so I think that's it.
 
+
+## Conclusion
 
 [^xkcd_license]: Comic licensed under a [Creative Commons Attribution-NonCommercial 2.5 License](http://creativecommons.org/licenses/by-nc/2.5/)
