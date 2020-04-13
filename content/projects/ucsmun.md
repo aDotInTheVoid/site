@@ -1,8 +1,6 @@
 ---
 title: UCSMun
-subtitle: A manager for a MUN conference
-layout: single
-date: 2015-01-15
+draft: true
 ---
 
 ```php

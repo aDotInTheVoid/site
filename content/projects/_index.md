@@ -2,6 +2,7 @@
 title: Projects
 subtitle: Things I've done
 type: list_detail
-kind: 
+draft: true
 ---
+
 I made this
