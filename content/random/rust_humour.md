@@ -12,4 +12,8 @@ The rustc internals book has a section of [rust humour](https://rustc-dev-guide.
 - [he's not your man, he's rustc](https://twitter.com/isislovecruft/status/1156686703706329088)
 - [error handling boilerplate](https://www.reddit.com/r/rustjerk/comments/7xtcos/_/)
 
+---
+
+If you have more to add, I'd love if you could send it on [github](https://github.com/aDotInTheVoid/site/blob/master/content/random/rust_humour.md)
+
 
