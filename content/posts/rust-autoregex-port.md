@@ -1,8 +1,7 @@
 ---
 title: "Metaregex: Python can be fast too"
-date: 2020-04-08T10:42:42+01:00
-draft: true
-toc: true
+date: 2020-05-20
+draft: false
 ---
 
 [![xkcd 1313](https://imgs.xkcd.com/comics/regex_golf.png)](https://xkcd.com/1313/)
@@ -62,9 +61,9 @@ const LOSERS: &str =
      stevenson nixon goldwater humphrey mcgovern ford carter \
      mondale dukakis bush dole gore kerry mccain romney clinton";
 
-const START: u8 = '^' as u8;
-const DOT: u8 = '.' as u8;
-const END: u8 = '$' as u8;
+const START: u8 = b'^';
+const DOT: u8 = b'.';
+const END: u8 = b'$';
 ```
 Things to note here:
 1. I've added new winners and looser to reflect the election status at the time
@@ -125,8 +124,8 @@ fn find_regex(winners: &mut Set, losers: &Set) -> String {
                 !Regex::new(best_part).unwrap().is_match(entry)
             });
             // Remove regex's that no longer match anything
-            pool.retain(|patern| {
-                matches(patern, winners.iter().map(|&x| x))
+            pool.retain(|pattern| {
+                matches(pattern, winners.iter().map(|&x| x))
                     .next()
                     .is_some()
             });
@@ -170,8 +169,8 @@ fn regex_parts<'a>(
         });
     whole.chain(parts)
 }
-
 ```
+
 This is relay nice. We can use
 [`flat_map`](https://doc.rust-lang.org/stable/std/iter/trait.Iterator.html#method.flat_map)
 to first expand every winner into their subparts and then expand the subparts
@@ -440,13 +439,13 @@ That a roughly 15% speedup just by ditching the system allocator (glibc 2.30-11)
 
 After using jemalloc, the flamegraph looks like this, and their is very little
 time spend allocating. Almost all the time is spend in `regex` itself, so I
-think that's it for now.
+think that's as far as we can go while keeping this a fair test.
 
 
 ## Conclusion
 Rust is fast but python can be fast too. While it can be easy to assume that
 with zero cost abstraction's and no garbage collector and no runtime, rust will
-smoke interprited languages like python and node. [This isn't the
+smoke interpreted languages like python and node. [This isn't the
 case](https://youtu.be/GCsxYAxw3JQ?t=1605). Alot of work has gone into cpython
 and v8 optimizations, and they both use c/c++ for things like regex and strings.
 
@@ -455,7 +454,10 @@ To quote [ashley williams (quoting someone else)](https://youtu.be/GCsxYAxw3JQ?t
 > I just fully expected to rust my way into 50% perf over js. Sometimes you
 > forget that v8 is pretty darn fast
 
-This apples equally to python. Rust isn't a silver bullet for speed. Garbage collection doesn't automatically mean performance will be bad. [RIIR](https://transitiontech.ca/random/RIIR) can make things worse. Rust is great, but so are other language
+This apples equally to python. Rust isn't a silver bullet for speed. Garbage
+collection doesn't automatically mean performance will be bad.
+[RIIR](https://transitiontech.ca/random/RIIR) can make things worse. Rust is
+great, but so are other language
 
 ## Future work
 Several things could still be done
@@ -466,10 +468,15 @@ By using PCRE on both sides, we could eliminate one cause of performance differe
 ### Use a custom regex engine
 On the other end of the specrum, if the goal is juicing as much speed as
 possible out of playing meta-regex golf, I suspect the way forward will be a
-custom regex engine designed for fast compilation
+custom regex engine that is designed for fast compilation and only supports the
+subset of regex used.
 
 ### Go over norvig's part 2
-Norvig has written a [followup](https://nbviewer.jupyter.org/url/norvig.com/ipython/xkcd1313-part2.ipynb#Speedup:--Faster-matches-by-Compiling-Regexes) to the original post. I have just used it for the cached version, but their are also some improvement to the algorithm, both in terms of speed and output quality, it would be interesting to port over.
+Norvig has written a
+[followup](https://nbviewer.jupyter.org/url/norvig.com/ipython/xkcd1313-part2.ipynb#Speedup:--Faster-matches-by-Compiling-Regexes)
+to the original post. I have just used it for the cached version, but their are
+also some improvement to the algorithm, both in terms of speed and output
+quality, it would be interesting to port over.
 
 ## Results Table
 |  | Real | User | Sys |
