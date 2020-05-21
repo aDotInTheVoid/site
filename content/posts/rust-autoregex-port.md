@@ -245,25 +245,35 @@ and theirs a lot of string allocation. However untuned rust code has
 beat c, so I should beat norvig's python, right?
 
 ```
-$ time ./target/release/v1_naive
-a.a|i..n|j|li|a.t|a..i|bu|oo|tr|ay.|n.e|r.e$|ls|po|lev
+$ hyperfine out/v1_naive
+Time (mean ± σ):    2.426s ± 0.070s [User: 2.420s, System: 0.001s]
+Range (min … max):  2.227s … 2.692s 500 runs
 
-real 2.395320
-user 2.388920
-sys 0.000000
-$ time python norvig.py 
-53 a.a|a..i|j|oo|a.t|i..o|i..n|bu|n.e|ay.|r.e$|tr|po|v.l
-
-real 1.181500
-user 1.175260
-sys 0.000000
+$ hyperfine python norvig.py 
+Time (mean ± σ):    1.186 s ± 0.013 s  [User: 1.179s, System: 0.003s]
+Range (min … max):  1.161 s … 1.252 s  500 runs
 ```
 [^bench notes]
 
-[^bench notes]: These benchmarks were taken from the average of 500 runs. 
-See [here](https://github.com/aDotInTheVoid/meta-regex-golf) for the full setup.
-Python 3.7.7 and rustc 1.43.1 were used on Fedora 31 system running
-linux 5.6.7-200 and glibc 2.30-11 with 8GB of RAM and an i7-2700K @ 3.50 GHz
+[^bench notes]:  See [here](https://github.com/aDotInTheVoid/meta-regex-golf)
+for the full setup and code, but in short I originally used `time` and `awk` to
+average benchmarks, but [a kind
+redditor](https://www.reddit.com/r/rust/comments/gnjc3y/meta_regex_golf_python_can_be_fast_too_adventures/fra6tta?utm_source=share&utm_medium=web2x),
+suggested [hyperfine](https://github.com/sharkdp/hyperfine), so I reran the
+benchmarks with that.
+
+    Benchmarked with 
+    `hyperfine -w 15 -m 500 --export-markdown BENCH.md "python3 norvig_nocache.py" "python3 norvig_with_cache.py" out/*`
+
+    #### System Details
+    - rustc 1.43.1 (8d69840ab 2020-05-04)
+    - Python 3.7.7
+    - hyperfine 1.6.0
+    - Fedora 31 (Workstation Edition) x86_64
+    - Linux 5.6.13-200.fc31.x86_64
+    - glibc-2.30-11.fc31.x86_64
+    - Intel i7-2700K (8) @ 3.900GHz, 7922MiB Ram (as reported by neofetch)
+
 
 How could this have happened. Well Norvig's code (probably) spends most of it's
 time not in interpreting python but in regex and set operators. Both of these
@@ -279,12 +289,9 @@ codegen-units = 1
 and build with `RUSTFLAGS="-C target-cpu=native" cargo build --release`
 
 ```
-$ time ./target/release/v3_cheep_tricks
-a.a|i..n|j|li|a.t|a..i|ru|oo|bu|n.e|ay.|r.e$|ls|po|lev
-
-real 2.289380
-user 2.283400
-sys 0.000000
+$ hyperfine ./target/release/v3_cheep_tricks
+Time (mean ± σ):    2.317s ± 0.068s  [User: 2.311s, System: 0.001s]
+Range (min … max):  2.148s … 2.587s  500 runs
 ```
 [^missing nums]
 Modest gains, but this isn't what we're looking for.
@@ -384,22 +391,20 @@ core::iter::adapters::chain::Chain<core::iter::adapters::Map<core::iter::adapter
 Has this worked.
 
 ```
-$ time ./target/release/v5_cache_regex
-a.a|i..n|j|oo|a.t|i..o|a..i|bu|tr|ay.|n.e|r.e$|po|vel
-
-real 0.190600
-user 0.180000
-sys 0.007200
+$ hyperfine ./target/release/v5_cache_regex
+Time (mean ± σ):    194.0ms ±   1.6ms  [User: 182.9ms, System: 10.4ms]
+Range (min … max):  190.8ms … 206.0ms  500 runs
 ```
 Yep, it has. That said [norvig did this
 too](https://nbviewer.jupyter.org/url/norvig.com/ipython/xkcd1313-part2.ipynb#Speedup:--Faster-matches-by-Compiling-Regexes), in his follow up post
-so we should benchmark that one, to be fair.
+so we should benchmark that one, to be fair. [^py_reg_cache]
+
+[^py_reg_cache]: As burntsushi (maintainer of the `regex` crate) [pointed out](https://www.reddit.com/r/rust/comments/gnjc3y/meta_regex_golf_python_can_be_fast_too_adventures/fra6enz?utm_source=share&utm_medium=web2x), python will also implicitly cache regexes, so be aware of that. That said, adding one line to manually cache is about 2x faster, so I don't really understand what's going on.
 
 ```
-$ python norvig_cache.py
-real 0.790220
-user 0.784960
-sys 0.000000
+$ hyperfine python norvig_cache.py
+Time (mean ± σ):    788.8ms ±  10.2ms  [User: 783.9ms, System: 2.9ms]
+Range (min … max):  770.8ms … 821.4ms  500 runs
 ```
 
 But can we go further? Let's do a flamegraph for this new version and see where we land
@@ -426,10 +431,9 @@ to the system allocator, such as Jemalloc [^mimalloc]:
 static GLOBAL: Jemalloc = Jemalloc;
 ```
 ```
-time ./target/release/v7_jemalloc
-real 0.163220
-user 0.153220
-sys 0.006380
+hyperfine ./target/release/v7_jemalloc
+Time (mean ± σ):    169.2ms ±   1.5ms  [User: 158.2ms, System: 10.5ms]
+Range (min … max):  166.4ms … 179.6ms  500 runs
 ```
 That a roughly 15% speedup just by ditching the system allocator (glibc 2.30-11).
 
@@ -479,17 +483,20 @@ also some improvement to the algorithm, both in terms of speed and output
 quality, it would be interesting to port over.
 
 ## Results Table
-|  | Real | User | Sys |
-|--|------|------|-----|
-| python3 norvig_nocache.py | 1.177380 | 1.171280 | 0.000000 |
-| python3 norvig_with_cache.py | 0.785040 | 0.779820 | 0.000000 |
-| out/v1_naive | 2.407900 | 2.401880 | 0.000000 |
-| out/v2_regex_feats | 2.428660 | 2.422040 | 0.000000 |
-| out/v3_cheep_tricks | 2.288340 | 2.282500 | 0.000000 |
-| out/v4_inline_never | 2.281600 | 2.275380 | 0.000020 |
-| out/v5_cache_regex | 0.190940 | 0.181220 | 0.006680 |
-| out/v6_regex_feats | 0.221020 | 0.213860 | 0.001540 |
-| out/v7_jemalloc | 0.169620 | 0.155900 | 0.006220 |
+| Command | Mean [s] | Min [s] | Max [s] | Relative |
+|:---|---:|---:|---:|---:|
+| `python3 norvig_nocache.py` | 1.186 ± 0.013 | 1.161 | 1.252 | 7.0 |
+| `python3 norvig_with_cache.py` | 0.789 ± 0.010 | 0.771 | 0.821 | 4.7 |
+| `out/v1_naive` | 2.426 ± 0.070 | 2.227 | 2.692 | 14.3 |
+| `out/v3_cheep_tricks` | 2.317 ± 0.068 | 2.148 | 2.587 | 13.7 |
+| `out/v5_cache_regex` | 0.194 ± 0.002 | 0.191 | 0.206 | 1.1 |
+| `out/v7_jemalloc` | 0.169 ± 0.002 | 0.166 | 0.180 | 1.0 |
+
+---
+
+[Discuss on reddit](https://www.reddit.com/r/rust/comments/gnjc3y/meta_regex_golf_python_can_be_fast_too_adventures/)
+
+[Get the code](https://github.com/aDotInTheVoid/meta-regex-golf/)
 
 
 [^xkcd_license]: Comic licensed under a [Creative Commons Attribution-NonCommercial 2.5 License](http://creativecommons.org/licenses/by-nc/2.5/)
