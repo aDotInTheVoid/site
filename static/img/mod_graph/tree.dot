@@ -1,0 +1,11 @@
+# dot tree.dot -o tree.svg -Tsvg
+
+digraph {
+    world -> usa;
+    world -> china;
+    world -> InternationalSpaceStation;
+    usa -> NewYork;
+    usa -> LosAngeles;
+    china -> Beijing;
+    china -> Shanghai;
+}

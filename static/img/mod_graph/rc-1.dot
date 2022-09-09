@@ -1,0 +1,9 @@
+# dot rc-1.dot -o rc-1.svg -Tsvg
+digraph {
+    hm_root [label="HashMap"];
+    hm_mod [label="HashMap"];
+
+    root -> hash_map;
+    hash_map -> hm_mod;
+    root -> hm_root;
+}

@@ -1,0 +1,6 @@
+# dot rc-0.dot -o rc-0.svg -Tsvg
+digraph {
+    root -> hash_map;
+    hash_map -> HashMap;
+    root -> HashMap [style="dotted"];
+}

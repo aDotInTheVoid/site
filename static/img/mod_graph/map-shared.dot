@@ -1,0 +1,18 @@
+digraph {
+    id0 [label="0" shape="diamond"];
+    id1 [label="1" shape="diamond"];
+    id2 [label="2" shape="diamond"];
+
+    id0_collections [label="collections"];
+    id1_hash_map [label="hash_map"];
+    id2_HashMap [label="HashMap"];
+
+    id0 -> id0_collections;
+    id1 -> id1_hash_map
+    id2 -> id2_HashMap;
+
+    id0_collections -> id1;
+    id0_collections -> id2;
+
+    id1_hash_map -> id2;   
+}
