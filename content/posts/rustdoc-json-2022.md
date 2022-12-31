@@ -39,9 +39,9 @@ Version [^version] 11 to 23 were released this year [^nye].
 [^nye]: Assuming nothing gets released on New Years Eve.
 
 11. [#94137](https://github.com/rust-lang/rust/pull/94137/): Clean up the `Header` struct by:
-    - Makking `ABI` an enum, instead of being stringly typed.
+    - Making `ABI` an enum, instead of being stringly typed.
     - Replace `HashSet<Qualifiers>` with 3 bools (`const_`, `unsafe_`, and `async_`).
-    - Merge `ABI` field into `Header`, as they always occour together.
+    - Merge `ABI` field into `Header`, as they always occur together.
 12. [#94009](https://github.com/rust-lang/rust/pull/94009/): Support GATs.
 13. [#94150](https://github.com/rust-lang/rust/pull/94150/): Report whether a generic type bound is `synthetic` (generated from `impl Trait` in argument position).
 14. [#94921](https://github.com/rust-lang/rust/pull/94921/): Make names more consistent:
@@ -85,11 +85,11 @@ there are many things that make it less of a burden for users:
 
 1. Version numbering: Because each version increase changes a constant. This
    makes error reporting much friendlier. [For
-   example](https://github.com/awslabs/cargo-check-external-types/blob/04ee5b72026bcd73292099904744184590f4e86d/src/cargo.rs#L73-L77)`cargo-check-external-types`
-   first attempts to deserialize just the format version, and bails if that
-   doesn't match. This means the user receives an error about the version of
-   nightly being wrong, which is much more useful and actionable than an error
-   about a missing or unknown JSON field.
+   example](https://github.com/awslabs/cargo-check-external-types/blob/04ee5b72026bcd73292099904744184590f4e86d/src/cargo.rs#L73-L77)
+   `cargo-check-external-types` first attempts to deserialize just the format
+   version, and bails if that doesn't match. This means the user receives an
+   error about the version of nightly being wrong, which is much more useful and
+   actionable than an error about a missing or unknown JSON field.
 2. JSON's inherent flexibility: Because of how `serde_json` works, adding a
    field won't break old code, nor will removing an enum variant. This means
    that many of the smaller changes may not actually require users to update.
@@ -109,7 +109,7 @@ there are many things that make it less of a burden for users:
 Format version 16, introduced in [#99287](https://github.com/rust-lang/rust/pull/99287/) merits its own discussion, as it was a much deeper change to how the format represents rust code, and fixed a lot more bugs.
 
 The root of the problem is that each new file in rust is its own module
-[^include]. This means that if each type went in it's own file (which was a `pub
+[^include]. This means that if each type went in its own file (which was a `pub
 mod`), then the type name is duplicated with the module name.
 
 [^include]: Barring the [`include!`](https://doc.rust-lang.org/stable/std/macro.include.html) macro, which isn't relevent here.
@@ -190,8 +190,9 @@ pub use style::Color;
 pub use style::Color as Colour;
 ```
 
-[In HTML Output](https://docs.rs/ansi_term/0.12.1/ansi_term/index.html#enums), both `Color` and `Colour` are created as seperate pages,
-with no indication that they are the same item. In fact, it is the same result as if
+[In HTML Output](https://docs.rs/ansi_term/0.12.1/ansi_term/index.html#enums),
+both `Color` and `Colour` are created as separate pages, with no indication that
+they are the same item. In fact, it is the same result as if
 
 ```rust
 pub struct Color;
@@ -215,7 +216,7 @@ output far less likely to ICE.
 
 Another nice user-facing change this year was including the docs for `std` (and
 friends) as a rustup component. Because `std` is special in that it isn't built
-like normal dependencies, but is magically made available by cargo and rustc, it's
+like normal dependencies, but is magically made available by cargo and rustc, its
 json [^html] docs can't be produced by cargo like they can for normal
 dependencies. Therefore they need to be shipped  by rustup.
 
@@ -237,7 +238,7 @@ automatically kept up to date with the nightly toolchain by rustup.
 ## Test tool improvements
 
 While these were the big user-facing improvements, there were also many internal
-improvements, paticularly around the test tooling.
+improvements, particularly around the test tooling.
 
 Rustdoc JSON is currently tested with two tools. The first, `jsondocck` reads
 comments from the files which contain assertions about the JSON output, and
@@ -332,20 +333,30 @@ should be. [^2023]. These were fixed, and tests were added.
 [^2023]: Hopefully I'll talk more about this in an upcoming post about my goals for rustdoc-json next year.
 
 - [#104879](https://github.com/rust-lang/rust/pull/104879/): Recognise `Typedef` as valid kind for `Type::ResolvedPath`
-- [#104924](https://github.com/rust-lang/rust/pull/104924/): Accept trait alias is places where trait expected.
+- [#104924](https://github.com/rust-lang/rust/pull/104924/): Accept trait alias in places where trait expected.
 - [#104943](https://github.com/rust-lang/rust/pull/104943/): Accept `use`ing enum variants and glob `use`ing enums.
 
 ## More Tests
 
-Another longstanding issue that was partily addressed this year is the relative lack of tests. This year
-the `rustdoc-json` suite has grown from 26 to 98 tests [^test_count]. For what it's worth, in the same time period, the main rustdoc suite [^other_suites] went from 484 to 586 tests.
+Another longstanding issue that was partially addressed this year is the
+relative lack of tests. This year the `rustdoc-json` suite has grown from 26 to
+98 tests [^test_count]. For what it's worth, in the same time period, the main
+rustdoc suite [^other_suites] went from 484 to 586 tests.
 
-[^test_count]: Measured on `bbdca4c28fd9b57212cb3316ff4ffb1529affcbe` (most recent commit as of the time of writing) and `1e6ced353215419f9e838bfbc3d61fe9eb0c004d` (last change to `src/test/rustdoc-json` in 2021). Number of tests measured with `fd -e rs | rg -v "auxiliary" | wc -l`.
+[^test_count]: Measured on `bbdca4c28fd9b57212cb3316ff4ffb1529affcbe` (most
+    recent commit as of the time of writing) and
+    `1e6ced353215419f9e838bfbc3d61fe9eb0c004d` (last change to
+    `src/test/rustdoc-json` in 2021). Number of tests measured with `fd -e rs |
+    rg -v "auxiliary" | wc -l`.
 
-[^other_suites]: This is only for the `src/test/rustdoc/` suite, and doesn't include ui, gui and std-json. But these are much smaller, and I'm trying to make a point about the rate of growth and the size of a mature test suite, not provide exact numbers. 
+[^other_suites]: This is only for the `src/test/rustdoc/` suite, and doesn't
+    include ui, gui and std-json. But these are much smaller, and I'm trying to
+    make a point about the rate of growth and the size of a mature test suite,
+    not provide exact numbers. 
 
-This was addressed in part with dedicated test adding PRs [^test_pr], but mainly due to good habbits of always adding tests when changing behaviour that we
-were lucky to inherit from the wider rust project.
+This was addressed in part with dedicated test adding PRs [^test_pr], but mainly
+due to good habits of always adding tests when changing behaviour that we were
+lucky to inherit from the wider rust project.
 
 [^test_pr]:
     [#93660](https://github.com/rust-lang/rust/pull/93660/)
@@ -362,15 +373,17 @@ were lucky to inherit from the wider rust project.
 
 ## Correctness Fixes
 
-The final change for 2022 was the vast, vast number of bug fixes [^fix_pr]. The fact that we we able to make so
-many fixes is a testament to how many users are reporting issues. This is mainly driven by tools that make use rustdoc-json,
-and in paticular cargo-public-api and cargo-semver-checks have driven alot more eyes towards the code.
+The final change for 2022 was the vast, vast number of bug fixes [^fix_pr]. The
+fact that we were able to make so many fixes is a testament to how many users
+are reporting issues. This is mainly driven by tools that make use rustdoc-json,
+and in paticular cargo-public-api and cargo-semver-checks have driven a lot more
+eyes towards the code.
 
-The other major source of bugs reports was running with
+The other major source of bug reports was running with
 [crater](https://github.com/rust-lang/rust/issues/99919), which while it can
-only find assertion failures, makes up for this with sheer volume. One thing I want to look into
-next year is running the `jsondoclint` tool in crater, so it can catch missing IDs, instead of just
-internal assertions failing.
+only find assertion failures, makes up for this with sheer volume. One thing I
+want to look into next year is running the `jsondoclint` tool in crater, so it
+can catch missing IDs, instead of just internal assertions failing.
 
 [^fix_pr]:
     [#92860](https://github.com/rust-lang/rust/pull/92860/)
@@ -398,13 +411,18 @@ internal assertions failing.
 
 ## Conclusion
 
-2022 was a good year for rustdoc-json. The format is better, the code is more reliable, the tests are more numerous and easier to write. Their are
-more users depending on it. All this was made possible by many people working on and around the format. In paticular, I'd like to thank
-Alex Kladov, Didrik Nordström, Guillaume Gomez, Jacob Hoffman-Andrews, Joseph
-Ryan, Joshua Nelson, León Orell Valerian Liehr, Luca Palmieri, Martin
-Nordholts,, Matthias Krüger , Michael Goulet, Michael Howell, Noah Lev, Predrag
-Gruevski, QuietMisdreavus, Rune Tynan, Tyler Mandry, and Urgau for their invaluable conributions.
+2022 was a good year for rustdoc-json. The format is better; The code is more
+reliable; The tests are more numerous and easier to write; Their are more users
+depending on it. All this was made possible by many people working on and around
+the format. In particular, I'd like to thank Alex Kladov, Didrik Nordström,
+Guillaume Gomez, Jacob Hoffman-Andrews, Joseph Ryan, Joshua Nelson, León Orell
+Valerian Liehr, Luca Palmieri, Martin Nordholts, Matthias Krüger , Michael
+Goulet, Michael Howell, Noah Lev, Predrag Gruevski, QuietMisdreavus, Rune Tynan,
+Tyler Mandry, and Urgau for their invaluable contributions.
 
-Hopefully next year can be as good as this. My main goal is to impove the way cross-crate ID lookup works, but theirs also more work to be done to fix more bugs, further flesh out the test suite, and increase performance. I'll write more about these in a future post.
+Hopefully next year we can continue to improve at this solid pace. My main goal
+is to impove the way cross-crate ID lookup works, but theirs also more work to
+be done to fix more bugs, further flesh out the test suite, and increase
+performance. I'll write more about these in a future post.
 
-If you want to hear about that when it come's out, or just generatly want to be notified the next time I have something to share online, you can find me in the Fediverse [@nixon@treehouse.systems](https://social.treehouse.systems/@nixon). If you have feedback or want do discuss the post, you can do that on [github](https://github.com/aDotInTheVoid/site/issues/1).
+If you want to hear about that when it comes out, or just generally want to be notified the next time I have something to share online, you can find me in the Fediverse [@nixon@treehouse.systems](https://social.treehouse.systems/@nixon). If you have questions or comments on this post, I'd love to hear them on [github](https://github.com/aDotInTheVoid/site/issues/1).
