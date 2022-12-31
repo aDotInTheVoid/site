@@ -11,15 +11,15 @@ It's that time of year again, when everyone
 [excellent](https://tweedegolf.nl/en/blog/81/our-year-in-rust)
 [summary](https://llogiq.github.io/2022/12/11/catch22.html)
 [articles](https://www.npopov.com/2022/12/20/This-year-in-LLVM-2022.html)
-[about](https://blog.yoshuawuyts.com/rust-2023/#footnote-reference-0)
+[about](https://blog.yoshuawuyts.com/rust-2023/)
 [what](https://www.youtube.com/watch?v=OuSiuySr6_Q)
 [happened](https://cohost.org/lcnr/post/690887-rust-in-2023)
 [this](https://slint-ui.com/blog/2022-in-review.html)
-year, and goals for the next one. I figured I should do the same for rustdoc-json.
+year, and goals for the next one. I figured I should do the same for rustdoc JSON.
 
-## What is rustdoc-json?
+## What is rustdoc JSON?
 
-If you haven't heard of it yet, rustdoc-json is an unstable feature for rustdoc
+If you haven't heard of it yet, rustdoc JSON is an unstable feature for rustdoc
 that allows rustdoc to output a JSON description of a crates API, as opposed to
 the stable HTML output.
 
@@ -93,7 +93,7 @@ there are many things that make it less of a burden for users:
 2. JSON's inherent flexibility: Because of how `serde_json` works, adding a
    field won't break old code, nor will removing an enum variant. This means
    that many of the smaller changes may not actually require users to update.
-3. Automatically notifying users: Maintainers of tools that consume rustdoc-json
+3. Automatically notifying users: Maintainers of tools that consume rustdoc JSON
    can be automatically notified when a change to the format is proposed. In some
    cases, this has led to fixes to tools being written before the PR to rust has
    landed (eg
@@ -209,7 +209,7 @@ item isn't a member of any module, and is only accessible via the imports. While
 this would be an unacceptable UI issue for HTML, in JSON it's better to report
 the true nature of the code than to try to clean it up with inlines.
 
-Changing this fixed a major source of issues for rustdoc-json, and make the
+Changing this fixed a major source of issues for rustdoc JSON, and make the
 output far less likely to ICE.
 
 ## Package std docs
@@ -217,7 +217,7 @@ output far less likely to ICE.
 Another nice user-facing change this year was including the docs for `std` (and
 friends) as a rustup component. Because `std` is special in that it isn't built
 like normal dependencies, but is magically made available by cargo and rustc, its
-json [^html] docs can't be produced by cargo like they can for normal
+JSON [^html] docs can't be produced by cargo like they can for normal
 dependencies. Therefore they need to be shipped  by rustup.
 
 [^html]: Or HTML for that matter. Rustup has long distributed html docs for `std` as a component.
@@ -330,7 +330,7 @@ patterns not covered by the test suite. They were only unearthed when
 `jsondoclint` was run on `core.json`, which isn't currently done in CI, but
 should be. [^2023]. These were fixed, and tests were added.
 
-[^2023]: Hopefully I'll talk more about this in an upcoming post about my goals for rustdoc-json next year.
+[^2023]: Hopefully I'll talk more about this in an upcoming post about my goals for rustdoc JSON next year.
 
 - [#104879](https://github.com/rust-lang/rust/pull/104879/): Recognise `Typedef` as valid kind for `Type::ResolvedPath`
 - [#104924](https://github.com/rust-lang/rust/pull/104924/): Accept trait alias in places where trait expected.
@@ -339,7 +339,7 @@ should be. [^2023]. These were fixed, and tests were added.
 ## More Tests
 
 Another longstanding issue that was partially addressed this year is the
-relative lack of tests. This year the `rustdoc-json` suite has grown from 26 to
+relative lack of tests. This year the `Rustdoc JSON` suite has grown from 26 to
 98 tests [^test_count]. For what it's worth, in the same time period, the main
 rustdoc suite [^other_suites] went from 484 to 586 tests.
 
@@ -375,7 +375,7 @@ lucky to inherit from the wider rust project.
 
 The final change for 2022 was the vast, vast number of bug fixes [^fix_pr]. The
 fact that we were able to make so many fixes is a testament to how many users
-are reporting issues. This is mainly driven by tools that make use rustdoc-json,
+are reporting issues. This is mainly driven by tools that make use rustdoc JSON,
 and in paticular cargo-public-api and cargo-semver-checks have driven a lot more
 eyes towards the code.
 
@@ -411,7 +411,7 @@ can catch missing IDs, instead of just internal assertions failing.
 
 ## Conclusion
 
-2022 was a good year for rustdoc-json. The format is better; The code is more
+2022 was a good year for rustdoc JSON. The format is better; The code is more
 reliable; The tests are more numerous and easier to write; Their are more users
 depending on it. All this was made possible by many people working on and around
 the format. In particular, I'd like to thank Alex Kladov, Didrik Nordström,
@@ -425,4 +425,8 @@ is to impove the way cross-crate ID lookup works, but theirs also more work to
 be done to fix more bugs, further flesh out the test suite, and increase
 performance. I'll write more about these in a future post.
 
-If you want to hear about that when it comes out, or just generally want to be notified the next time I have something to share online, you can find me in the Fediverse [@nixon@treehouse.systems](https://social.treehouse.systems/@nixon). If you have questions or comments on this post, I'd love to hear them on [github](https://github.com/aDotInTheVoid/site/issues/1).
+If you want to hear about that when it comes out, or just generally want to be
+notified the next time I have something to share online, you can find me in the
+Fediverse [@nixon@treehouse.systems](https://social.treehouse.systems/@nixon).
+If you have questions or comments on this post, I'd love to hear them on
+[github](https://github.com/aDotInTheVoid/site/issues/1).
