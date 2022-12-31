@@ -72,11 +72,11 @@ While doing this many changes (on average about 2 a month), may seem disruptive,
 
 ## Big Change: Don't inline
 
-Format version 16, introduced in [#99287](https://github.com/rust-lang/rust/pull/99287/) merits it's own discussion, as
-... TODO:
+Format version 16, introduced in [#99287](https://github.com/rust-lang/rust/pull/99287/) merits it's own discussion, as it was a much deeper change to how the format represents rust code, and fixed alot more bugs.
 
-Because each new file in rust is it's own module [^include], by if each type goes in it's own file, then the type name is duplicated with
-the module name.
+The root of the problem is that each new file in rust is it's own module
+[^include]. This means that if each type went in it's own file (which was a `pub
+mod`), then the type name is duplicated with the module name.
 
 [^include]: Barring the [`include!`](https://doc.rust-lang.org/stable/std/macro.include.html) macro, which isn't relevent here.
 
@@ -108,7 +108,7 @@ pub struct Set;
 pub struct Map;
 ```
 
-Then users of the module see the paths like `collections::list::List`, which needlessly duplicates list. To work around this, code like this instead get's written as
+Then users of the module see the paths like `collections::list::List`, which needlesly duplicates list. To work around this, code like this tends to get written as
 
 ```rust
 // collections/src/lib.rs
@@ -136,7 +136,6 @@ pub struct Map;
 ```
 
 But also allows the seperate types to be in their own files, which is much nicer for the library author.
-
 
 Rustdoc goes to alot of effort to make the code with private `mod`s and `pub
 use`s look like it was all writen in one file. In paticular it sometimes
@@ -167,10 +166,14 @@ was written.
 
 In JSON this would crash, as two different items were created with the same ID, trigering an assertion failure.
 
-The fix for this in JSON is to not inline, and instead report the root module as having two items, both of which are imports of the same struct item.
-The struct item isn't a member of any module, and is only accessable via the imports. While this would be an unnacptable UI issue for HTML, in JSON it's better to report the true nature of the code than to try to clean it up with inlines.
+The fix for this in JSON is to not inline, and instead report the root module as
+having two items, both of which are imports of the same struct item. The struct
+item isn't a member of any module, and is only accessable via the imports. While
+this would be an unnacptable UI issue for HTML, in JSON it's better to report
+the true nature of the code than to try to clean it up with inlines.
 
-Changing this fixed a major source of issues for rustdoc-json, and make the output far less likely to ICE.
+Changing this fixed a major source of issues for rustdoc-json, and make the
+output far less likely to ICE.
 
 ## Package std docs
 
