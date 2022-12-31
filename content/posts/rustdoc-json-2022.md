@@ -1,7 +1,7 @@
 ---
 title: Rustdoc JSON in 2022 and beyond
-draft: true
-date: 2022-12-27
+draft: false
+date: 2022-12-31
 ---
 
 
@@ -339,9 +339,9 @@ should be. [^2023]. These were fixed, and tests were added.
 ## More Tests
 
 Another longstanding issue that was partially addressed this year is the
-relative lack of tests. This year the `Rustdoc JSON` suite has grown from 26 to
-98 tests [^test_count]. For what it's worth, in the same time period, the main
-rustdoc suite [^other_suites] went from 484 to 586 tests.
+relative lack of tests. This year the `rustdoc-json` suite has grown from 26 to
+98 tests [^test_count]. (For what it's worth, in the same time period, the main
+rustdoc suite [^other_suites] went from 484 to 586 tests.)
 
 [^test_count]: Measured on
     [`bbdca4c`](https://github.com/rust-lang/rust/tree/bbdca4c28fd9b57212cb3316ff4ffb1529affcbe)
