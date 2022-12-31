@@ -33,10 +33,10 @@ The biggest user-facing change has been the number of changes to the JSON Format
 Version [^version] 11 to 23 were released this year [^nye].
 
 [^version]: At the root level of the output, theirs a field called
-    `format_version`, that gets increased by 1 every time we change the
+    `format_version`, which gets increased by 1 every time we change the
     definition of the types that get serialized.
 
-[^nye]: Assuming nothing gets released on New Years Eve.
+[^nye]: Assuming nothing gets released on New Year's Eve.
 
 11. [#94137](https://github.com/rust-lang/rust/pull/94137/): Clean up the `Header` struct by:
     - Making `ABI` an enum, instead of being stringly typed.
@@ -74,7 +74,7 @@ Version [^version] 11 to 23 were released this year [^nye].
 
 [^discr_unit]: It turns out this support isn't great. While writing this post, I
     realised that we only support discriminants on unit variants. This
-    restruction has [been
+    restriction has [been
     lifted](https://blog.rust-lang.org/2022/12/15/Rust-1.66.0.html#explicit-discriminants-on-enums-with-fields),
     and I've filled [an issue](https://github.com/rust-lang/rust/issues/106299)
     and intend to fix it in the new year.
@@ -112,7 +112,7 @@ The root of the problem is that each new file in rust is its own module
 [^include]. This means that if each type went in its own file (which was a `pub
 mod`), then the type name is duplicated with the module name.
 
-[^include]: Barring the [`include!`](https://doc.rust-lang.org/stable/std/macro.include.html) macro, which isn't relevent here.
+[^include]: Barring the [`include!`](https://doc.rust-lang.org/stable/std/macro.include.html) macro, which isn't relevant here.
 
 Eg if theirs a library called `collections` that's laid out like
 
@@ -343,11 +343,12 @@ relative lack of tests. This year the `Rustdoc JSON` suite has grown from 26 to
 98 tests [^test_count]. For what it's worth, in the same time period, the main
 rustdoc suite [^other_suites] went from 484 to 586 tests.
 
-[^test_count]: Measured on `bbdca4c28fd9b57212cb3316ff4ffb1529affcbe` (most
-    recent commit as of the time of writing) and
-    `1e6ced353215419f9e838bfbc3d61fe9eb0c004d` (last change to
-    `src/test/rustdoc-json` in 2021). Number of tests measured with `fd -e rs |
-    rg -v "auxiliary" | wc -l`.
+[^test_count]: Measured on
+    [`bbdca4c`](https://github.com/rust-lang/rust/tree/bbdca4c28fd9b57212cb3316ff4ffb1529affcbe)
+    (most recent commit as of the time of writing) and
+    [`1e6ced3`](https://github.com/rust-lang/rust/tree/1e6ced353215419f9e838bfbc3d61fe9eb0c004d)
+    (last change to `src/test/rustdoc-json` in 2021). Number of tests measured
+    with `fd -e rs | rg -v "auxiliary" | wc -l`.
 
 [^other_suites]: This is only for the `src/test/rustdoc/` suite, and doesn't
     include ui, gui and std-json. But these are much smaller, and I'm trying to
