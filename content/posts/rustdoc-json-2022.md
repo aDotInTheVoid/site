@@ -46,12 +46,29 @@ Version 11 to 23 were released this year [^nye].
 
 While doing this many changes (on average about 2 a month), may seem disruptive, their are many things that make it less.
 
-1. JSON's inherint flexability: Because of how `serde_json` works, adding a field won't break old code, nor will removing an enum variant. This means that many of the smaller changes 
-2. Version numbering: Because each version increase changes a constant. This allows consumers to report a nicer error (TODO: Link to code).
-3. Automaticly notifiying users: Maintainers of tools that consume `rustdoc-json` can be automaticly notified when a change to the format is proposed. In some cases, this has lead to fixes to tools being writen before the PR to rust has landed (TODO: Link). If you want to get early warning for changes, add yourself to [this list](https://github.com/rust-lang/rust/blob/7c991868c60a4afc1ee6334b912ea96061a2c98d/triagebot.toml#L404-L415), and the magic of rust's bots will keep you up to date.
-
-
 [^discr_unit]: It turns out this support isn't great. While writing this post, I realised that we only support discriminants on unit variants. This restruction has [been lifted](https://blog.rust-lang.org/2022/12/15/Rust-1.66.0.html#explicit-discriminants-on-enums-with-fields), and I've filled [an issue](https://github.com/rust-lang/rust/issues/106299) and intend to fix it in the new year.
+
+
+1. Version numbering: Because each version increase changes a constant. This
+   makes error reporting much friendlyer. [For
+   example](https://github.com/awslabs/cargo-check-external-types/blob/04ee5b72026bcd73292099904744184590f4e86d/src/cargo.rs#L73-L77)`cargo-check-external-types`
+   first attepts to deserialize just the format version, and bails if that
+   doesn't match. This means the user recieves an error about the version of
+   nightly being wrong, which is much more usefull and actionable than an error
+   about a missing or unknown JSON field.
+2. JSON's inherint flexability: Because of how `serde_json` works, adding a
+   field won't break old code, nor will removing an enum variant. This means
+   that many of the smaller changes may not actualy require users to update.
+3. Automaticly notifiying users: Maintainers of tools that consume rustdoc-json
+   can be automaticly notified when a change to the format is proposed. In some
+   cases, this has lead to fixes to tools being writen before the PR to rust has
+   landed (eg
+   [Enselic/cargo-public-api#95](https://github.com/Enselic/cargo-public-api/pull/95)
+   and [#100335](https://github.com/rust-lang/rust/pull/100335)). If you want to
+   get early warning for changes, add yourself to [this
+   list](https://github.com/rust-lang/rust/blob/7c991868c60a4afc1ee6334b912ea96061a2c98d/triagebot.toml#L404-L415),
+   and the magic of rust's bots will keep you up to date.
+
 
 ## Big Change
 
@@ -211,8 +228,11 @@ The final change for 2022 was the vast, vast number of bug fixes [^fix_pr]. The 
 many fixes is a testament to how many users are reporting issues. This is mainly driven by tools that make use rustdoc-json,
 and in paticular cargo-public-api and cargo-semver-checks have driven alot more eyes towards the code.
 
-The other major source of bugs was running with [crater](https://github.com/rust-lang/rust/issues/99919), which while it can only find assertion
-failures, makes up for this with sheer volume.
+The other major source of bugs reports was running with
+[crater](https://github.com/rust-lang/rust/issues/99919), which while it can
+only find assertion failures, makes up for this with sheer volume. One thing I want to look into
+next year is running the `jsondoclint` tool in crater, so it can catch missing IDs, instead of just
+internal assertions failing.
 
 [^fix_pr]:
     [#92860](https://github.com/rust-lang/rust/pull/92860/)
@@ -247,5 +267,6 @@ Ryan, Joshua Nelson, León Orell Valerian Liehr, Luca Palmieri, Martin
 Nordholts,, Matthias Krüger , Michael Goulet, Michael Howell, Noah Lev, Predrag
 Gruevski, QuietMisdreavus, Rune Tynan, Tyler Mandry, and Urgau for their invaluable conributions.
 
-If you have feedback or want do discuss the post, you can do that on [github](https://github.com/aDotInTheVoid/site/issues/1).
-If you want to be notified the next time I have something to share online, you can find me in the Fediverse [@nixon@treehouse.systems](https://social.treehouse.systems/@nixon)
+Hopefully next year can be as good as this. My main goal is to impove the way cross-crate ID lookup works, but theirs also more work to be done to fix more bugs, further flesh out the test suite, and increase performance. I'll write more about these in a future post.
+
+If you want to hear about that when it come's out, or just generatly want to be notified the next time I have something to share online, you can find me in the Fediverse [@nixon@treehouse.systems](https://social.treehouse.systems/@nixon). If you have feedback or want do discuss the post, you can do that on [github](https://github.com/aDotInTheVoid/site/issues/1).
