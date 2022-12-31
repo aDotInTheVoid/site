@@ -15,13 +15,25 @@ It's that time of year again, when everyone
 [what](https://www.youtube.com/watch?v=OuSiuySr6_Q)
 [happend](https://cohost.org/lcnr/post/690887-rust-in-2023)
 [this](https://slint-ui.com/blog/2022-in-review.html)
-year, and goals for the next one. I figured I should do the same for Rustdoc-JSON.
+year, and goals for the next one. I figured I should do the same for rustdoc-json.
 
+## What is rustdoc-json?
+
+If you haven't heard of it yet, rustdoc-json is an unsable feature for rustdoc that allows
+rustdoc to output a JSON description of a crates API, as opposed to the stable HTML output.
+
+This allows tools to be written that reason about an API without them having to interface directly
+with the (even more unstable) rustc APIs, and that benefit from all the processing and cleanup that
+rustdoc does.
 
 ## Format Changes
 
 The biggest user facing change has been the number of changes to the JSON Format itself.
-Version 11 to 23 were released this year [^nye].
+Version [^version] 11 to 23 were released this year [^nye].
+
+[^version]: At the root level of the output, theirs a field called
+    `format_version`, that gets increased by 1 every time we change the
+    definition of the types that get serialized.
 
 [^nye]: Assuming nothing gets released on New Years Eve.
 
@@ -44,10 +56,15 @@ Version 11 to 23 were released this year [^nye].
 22. [#102321](https://github.com/rust-lang/rust/pull/102321/): Add `impls` to `Primitive`s.
 23. [#104499](https://github.com/rust-lang/rust/pull/104499/): Use Function everywhere and remove Method
 
-While doing this many changes (on average about 2 a month), may seem disruptive, their are many things that make it less.
+[^discr_unit]: It turns out this support isn't great. While writing this post, I
+    realised that we only support discriminants on unit variants. This
+    restruction has [been
+    lifted](https://blog.rust-lang.org/2022/12/15/Rust-1.66.0.html#explicit-discriminants-on-enums-with-fields),
+    and I've filled [an issue](https://github.com/rust-lang/rust/issues/106299)
+    and intend to fix it in the new year.
 
-[^discr_unit]: It turns out this support isn't great. While writing this post, I realised that we only support discriminants on unit variants. This restruction has [been lifted](https://blog.rust-lang.org/2022/12/15/Rust-1.66.0.html#explicit-discriminants-on-enums-with-fields), and I've filled [an issue](https://github.com/rust-lang/rust/issues/106299) and intend to fix it in the new year.
 
+While doing this many changes (on average about 2 a month), may seem disruptive, their are many things that make it less of a burden for users:
 
 1. Version numbering: Because each version increase changes a constant. This
    makes error reporting much friendlyer. [For
@@ -240,7 +257,7 @@ pub use private_mod::*;
 It checks that the struct `S` has an impl block who'se only method is
 `is_present`, and that `hidden_impl` and `hidden_fn` arn't mentioned.
 
-Over this year, two major changes were landed to `jsondoclint` that makes writing these tests much nicer.
+Over this year, two major changes were landed to `jsondocck` that makes writing these tests much nicer.
 
 1. [#99474](https://github.com/rust-lang/rust/pull/99474/): Add `@ismany` to `jsondocck` to do setwise comparison.
 2. [#100678](https://github.com/rust-lang/rust/pull/100678/): Don't require specifying file in `jsondocck`.
