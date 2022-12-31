@@ -1,5 +1,5 @@
 ---
-title: Rustdoc JSON in 2022 and beyond
+title: Rustdoc JSON in 2022
 draft: false
 date: 2022-12-31
 ---
@@ -32,7 +32,7 @@ rustdoc does.
 The biggest user-facing change has been the number of changes to the JSON Format itself.
 Version [^version] 11 to 23 were released this year [^nye].
 
-[^version]: At the root level of the output, theirs a field called
+[^version]: At the root level of the output, there's a field called
     `format_version`, which gets increased by 1 every time we change the
     definition of the types that get serialized.
 
@@ -114,7 +114,7 @@ mod`), then the type name is duplicated with the module name.
 
 [^include]: Barring the [`include!`](https://doc.rust-lang.org/stable/std/macro.include.html) macro, which isn't relevant here.
 
-Eg if theirs a library called `collections` that's laid out like
+Eg if there's a library called `collections` that's laid out like
 
 ```
 collections/
@@ -422,7 +422,7 @@ Goulet, Michael Howell, Noah Lev, Predrag Gruevski, QuietMisdreavus, Rune Tynan,
 Tyler Mandry, and Urgau for their invaluable contributions.
 
 Hopefully next year we can continue to improve at this solid pace. My main goal
-is to impove the way cross-crate ID lookup works, but theirs also more work to
+is to impove the way cross-crate ID lookup works, but there's also more work to
 be done to fix more bugs, further flesh out the test suite, and increase
 performance. I'll write more about these in a future post.
 
