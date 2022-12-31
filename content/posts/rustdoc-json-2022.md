@@ -70,11 +70,107 @@ While doing this many changes (on average about 2 a month), may seem disruptive,
    and the magic of rust's bots will keep you up to date.
 
 
-## Big Change
+## Big Change: Don't inline
 
-- [#99287](https://github.com/rust-lang/rust/pull/99287/)
+Format version 16, introduced in [#99287](https://github.com/rust-lang/rust/pull/99287/) merits it's own discussion, as
+... TODO:
 
-TODO
+Because each new file in rust is it's own module [^include], by if each type goes in it's own file, then the type name is duplicated with
+the module name.
+
+[^include]: Barring the [`include!`](https://doc.rust-lang.org/stable/std/macro.include.html) macro, which isn't relevent here.
+
+Eg if theirs a library called `collections` that's layed out like
+
+```
+collections/
+├── Cargo.lock
+├── Cargo.toml
+└── src
+    ├── lib.rs
+    ├── list.rs
+    ├── map.rs
+    └── set.rs
+```
+
+And written like
+
+```rust
+// collections/src/lib.rs
+pub mod list;
+pub mod set;
+pub mod map;
+// collections/src/list.rs
+pub struct List;
+// collections/src/set.rs
+pub struct Set;
+// collections/src/map.rs
+pub struct Map;
+```
+
+Then users of the module see the paths like `collections::list::List`, which needlessly duplicates list. To work around this, code like this instead get's written as
+
+```rust
+// collections/src/lib.rs
+mod list;
+mod set;
+mod map;
+pub use list::List;
+pub use set::Set;
+pub use map::Map;
+// collections/src/list.rs
+pub struct List;
+// collections/src/set.rs
+pub struct Set;
+// collections/src/map.rs
+pub struct Map;
+```
+
+And the user now see's only `collections::List`, which is much nicer. It is as if the library author instead just wrote
+
+```rust
+// collections/src/lib.rs
+pub struct List;
+pub struct Set;
+pub struct Map;
+```
+
+But also allows the seperate types to be in their own files, which is much nicer for the library author.
+
+
+Rustdoc goes to alot of effort to make the code with private `mod`s and `pub
+use`s look like it was all writen in one file. In paticular it sometimes
+"inline"s items into the location's that they are use'd, by replacing a 
+`pub use` of an item with the item being used.
+
+While this is great for the HTML output, it caused boundless problems for JSON. The most
+canonical example is
+
+```rust
+mod style {
+    pub struct Color;
+}
+
+pub use style::Color;
+pub use style::Color as Colour;
+```
+
+[In HTML Output](https://docs.rs/ansi_term/0.12.1/ansi_term/index.html#enums), both `Color` and `Colour` are created as seperate pages,
+with no indication that they are the same item. Infact, it is the same result as if
+
+```rust
+pub struct Color;
+pub struct Colour;
+```
+
+was written.
+
+In JSON this would crash, as two different items were created with the same ID, trigering an assertion failure.
+
+The fix for this in JSON is to not inline, and instead report the root module as having two items, both of which are imports of the same struct item.
+The struct item isn't a member of any module, and is only accessable via the imports. While this would be an unnacptable UI issue for HTML, in JSON it's better to report the true nature of the code than to try to clean it up with inlines.
+
+Changing this fixed a major source of issues for rustdoc-json, and make the output far less likely to ICE.
 
 ## Package std docs
 
