@@ -413,7 +413,7 @@ can catch missing IDs, instead of just internal assertions failing.
 ## Conclusion
 
 2022 was a good year for rustdoc JSON. The format is better; The code is more
-reliable; The tests are more numerous and easier to write; Their are more users
+reliable; The tests are more numerous and easier to write; There are more users
 depending on it. All this was made possible by many people working on and around
 the format. In particular, I'd like to thank Alex Kladov, Didrik Nordström,
 Guillaume Gomez, Jacob Hoffman-Andrews, Joseph Ryan, Joshua Nelson, León Orell
@@ -422,7 +422,7 @@ Goulet, Michael Howell, Noah Lev, Predrag Gruevski, QuietMisdreavus, Rune Tynan,
 Tyler Mandry, and Urgau for their invaluable contributions.
 
 Hopefully next year we can continue to improve at this solid pace. My main goal
-is to impove the way cross-crate ID lookup works, but there's also more work to
+is to improve the way cross-crate ID lookup works, but there's also more work to
 be done to fix more bugs, further flesh out the test suite, and increase
 performance. I'll write more about these in a future post.
 
